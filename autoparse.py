@@ -30,7 +30,7 @@ import sys
 def error(msg):
     """Print an error message to stderr and exit with status 2."""
     print("%s: error: %s" % (sys.argv[0], msg), file=sys.stderr)
-    print("Run '%s --help' for more info." % self.prog, file=sys.stderr)
+    print("Run '%s --help' for more info." % sys.argv[0], file=sys.stderr)
     sys.exit(2)
 
 
