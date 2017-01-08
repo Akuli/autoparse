@@ -27,6 +27,13 @@ import inspect
 import sys
 
 
+def error(msg):
+    """Print an error message to stderr and exit with status 2."""
+    print("%s: error: %s" % (sys.argv[0], msg), file=sys.stderr)
+    print("Run '%s --help' for more info." % self.prog, file=sys.stderr)
+    sys.exit(2)
+
+
 class _ArgParser(argparse.ArgumentParser):
 
     def __init__(self, docstring, **kwargs):
@@ -37,9 +44,7 @@ class _ArgParser(argparse.ArgumentParser):
         return self.format_usage() + '\n' + self.__doc + '\n'
 
     def error(self, msg):
-        print("%s: error: %s" % (self.prog, msg), file=sys.stderr)
-        print("Run '%s --help' for more info." % self.prog, file=sys.stderr)
-        sys.exit(2)
+        error(msg)
 
 
 def _set_action_or_type(cls, kwargs):
@@ -50,6 +55,10 @@ def _set_action_or_type(cls, kwargs):
 
 
 def program(function):
+    """Return a function that parses arguments based on function's signature.
+
+    Use this as a decorator.
+    """
     if function.__doc__ is None:
         raise ValueError("the function must have a docstring")
     parser = _ArgParser(function.__doc__)
