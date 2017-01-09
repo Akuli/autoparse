@@ -54,17 +54,17 @@ def _set_action_or_type(cls, kwargs):
         kwargs['type'] = cls
 
 
-def program(function):
-    """Return a function that parses arguments based on function's signature.
+def program(func):
+    """Return a function that parses arguments based on func's signature.
 
     Use this as a decorator.
     """
-    if function.__doc__ is None:
+    if func.__doc__ is None:
         raise ValueError("the function must have a docstring")
 
     add_argument_args = []
 
-    signature = inspect.signature(function)
+    signature = inspect.signature(func)
     for underscorename, param in signature.parameters.items():
         dashname = underscorename.replace('_', '-')
         args = []
@@ -113,9 +113,9 @@ def program(function):
         add_argument_args.append((args, kwargs))
 
     def main():
-        parser = _ArgParser(function.__doc__)
+        parser = _ArgParser(func.__doc__)
         for args, kwargs in add_argument_args:
             parser.add_argument(*args, **kwargs)
-        return function(**parser.parse_args().__dict__)
+        return func(**parser.parse_args().__dict__)
 
     return main
