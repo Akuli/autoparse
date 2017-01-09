@@ -61,7 +61,8 @@ def program(function):
     """
     if function.__doc__ is None:
         raise ValueError("the function must have a docstring")
-    parser = _ArgParser(function.__doc__)
+
+    add_argument_args = []
 
     signature = inspect.signature(function)
     for underscorename, param in signature.parameters.items():
@@ -109,10 +110,12 @@ def program(function):
 
         else:
             raise ValueError("unknown parameter kind %r" % param.kind)
-        parser.add_argument(*args, **kwargs)
+        add_argument_args.append((args, kwargs))
 
     def main():
-        args = parser.parse_args()
-        return function(**args.__dict__)
+        parser = _ArgParser(function.__doc__)
+        for args, kwargs in add_argument_args:
+            parser.add_argument(*args, **kwargs)
+        return function(**parser.parse_args().__dict__)
 
     return main
